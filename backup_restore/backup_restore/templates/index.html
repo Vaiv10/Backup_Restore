@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Backup Tool</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Git Backup Tool</h1>
+        <div>
+            <input id="repoUrl" type="text" placeholder="Enter Git Repository URL" />
+            <input id="backupDir" type="text" placeholder="Enter Backup Directory" />
+            <button onclick="backupRepo()">Backup Repository</button>
+        </div>
+        <div>
+            <input id="backupFile" type="text" placeholder="Enter Backup File Path" />
+            <input id="restoreDir" type="text" placeholder="Enter Restore Directory" />
+            <button onclick="restoreRepo()">Restore Repository</button>
+        </div>
+        <div id="response"></div>
+    </div>
+    <script>
+        async function backupRepo() {
+            const repoUrl = document.getElementById("repoUrl").value;
+            const backupDir = document.getElementById("backupDir").value;
+
+            const response = await fetch("/backup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ repo_url: repoUrl, backup_dir: backupDir })
+            });
+
+            const result = await response.json();
+            document.getElementById("response").innerText = result.message || result.error;
+        }
+
+        async function restoreRepo() {
+            const backupFile = document.getElementById("backupFile").value;
+            const restoreDir = document.getElementById("restoreDir").value;
+
+            const response = await fetch("/restore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ backup_file: backupFile, restore_dir: restoreDir })
+            });
+
+            const result = await response.json();
+            document.getElementById("response").innerText = result.message || result.error;
+        }
+    </script>
+</body>
+</html>
